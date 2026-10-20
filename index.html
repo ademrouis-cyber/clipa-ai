@@ -1,1187 +1,721 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#080914">
-<meta name="description" content="CLIPA AI — a cinematic AI workspace for ideas, learning and creation.">
 <title>CLIPA AI — Intelligence, evolved</title>
 
 <style>
 :root {
   color-scheme: dark;
-  --bg:#080914;
-  --surface:#101324;
-  --surface2:#151a30;
-  --surface3:#1b2240;
-  --border:rgba(168,181,235,.14);
-  --text:#f2f3ff;
-  --muted:#9ba4c2;
-  --faint:#6d7696;
-  --cyan:#6ceaf5;
-  --violet:#a99aff;
-  --pink:#d6a0ff;
-  --danger:#ff8da7;
-  --sidebar:275px;
-  --shadow:0 24px 80px rgba(0,0,0,.4);
+  --bg:#080914;--panel:#101324;--panel2:#171a30;
+  --border:rgba(168,181,235,.14);--text:#f2f3ff;
+  --muted:#9ba4c2;--faint:#6d7696;
+  --cyan:#6ceaf5;--violet:#a99aff;--pink:#d6a0ff;
 }
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;min-height:100%;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
-body{height:100vh;height:100dvh;overflow:hidden}
-button,input,textarea,select{font:inherit}
-button{color:inherit;-webkit-tap-highlight-color:transparent}
-button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+html,body{margin:0;width:100%;height:100%;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+body{height:100dvh;overflow:hidden}
+button,input,textarea{font:inherit}
+button{color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
 button:disabled{opacity:.45;cursor:not-allowed}
-svg{display:block}
-.app{position:relative;display:flex;width:100%;height:100%;overflow:hidden;background:radial-gradient(ellipse at 70% -15%,rgba(106,91,228,.18),transparent 42%),radial-gradient(ellipse at 45% 110%,rgba(36,191,211,.08),transparent 40%),var(--bg)}
-button{cursor:pointer}
-button:active:not(:disabled){transform:scale(.985)}
-/* Sidebar */
-.sidebar{position:relative;z-index:20;display:flex;flex:0 0 var(--sidebar);flex-direction:column;width:var(--sidebar);min-width:0;padding:19px 14px 13px;border-right:1px solid var(--border);background:rgba(10,12,25,.94);backdrop-filter:blur(24px);transition:transform .26s ease}
-.brand{display:flex;align-items:center;gap:11px;padding:3px 5px 22px}
-.brand-logo{position:relative;display:grid;place-items:center;width:43px;height:43px;flex-shrink:0;border:1px solid rgba(108,234,245,.38);border-radius:15px;background:linear-gradient(145deg,rgba(108,234,245,.2),rgba(169,154,255,.18));box-shadow:0 0 30px rgba(108,234,245,.1),inset 0 0 20px rgba(169,154,255,.1)}
-.brand-logo svg{width:27px;height:27px;color:var(--cyan)}
-.brand-name{font-size:17px;font-weight:800;letter-spacing:1.7px}
-.brand-tag{margin-top:4px;color:var(--muted);font-size:9px;letter-spacing:1.7px;text-transform:uppercase}
-.section-label{padding:0 9px 10px;color:var(--faint);font-size:10px;font-weight:750;letter-spacing:1.6px;text-transform:uppercase}
-.side-button{display:flex;align-items:center;gap:10px;width:100%;min-height:41px;padding:0 11px;margin-bottom:5px;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--muted);text-align:left;font-size:12px;transition:background .18s,border-color .18s,color .18s}
-.side-button svg{width:17px;height:17px;flex-shrink:0}
-.side-button:hover{color:var(--text);background:rgba(255,255,255,.045)}
-.side-button.primary{border-color:rgba(108,234,245,.2);background:linear-gradient(110deg,rgba(108,234,245,.1),rgba(169,154,255,.08));color:var(--text)}
-.side-button.primary svg{color:var(--cyan)}
-.side-divider{height:1px;margin:14px 3px;background:var(--border)}
-.search-wrap{position:relative;margin:0 0 12px}
-.search-wrap svg{position:absolute;top:11px;left:11px;width:15px;height:15px;color:var(--faint);pointer-events:none}
-.search-input{width:100%;height:37px;padding:0 10px 0 33px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.025);color:var(--text);font-size:12px}
-.search-input::placeholder{color:var(--faint)}
-.history-list{min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(155,164,194,.2) transparent}
-.history-item{display:flex;align-items:center;gap:7px;margin-bottom:3px;padding:5px;border:1px solid transparent;border-radius:10px}
-.history-item.active{border-color:var(--border);background:rgba(255,255,255,.045)}
-.history-open{display:flex;align-items:center;gap:9px;flex:1;min-width:0;min-height:34px;padding:0 5px;border:0;background:transparent;text-align:left;color:var(--muted);font-size:12px}
-.history-open svg{width:15px;height:15px;flex-shrink:0;color:var(--faint)}
-.history-open span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.history-item.active .history-open{color:var(--text)}
-.history-actions{display:flex;gap:1px;opacity:.65}
-.history-action{display:grid;place-items:center;width:27px;height:28px;border:0;border-radius:7px;background:transparent;color:var(--muted)}
-.history-action:hover{background:rgba(255,255,255,.07);color:var(--text)}
-.history-action svg{width:14px;height:14px}
-.history-empty{padding:12px 9px;color:var(--faint);font-size:11px;line-height:1.6}
-.sidebar-spacer{flex:1;min-height:16px}
-.sidebar-promo{padding:13px;border:1px solid rgba(169,154,255,.19);border-radius:14px;background:radial-gradient(ellipse at 100% 0%,rgba(169,154,255,.13),transparent 60%),rgba(255,255,255,.02)}
-.promo-title{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:750}
-.promo-title svg{width:15px;height:15px;color:var(--violet)}
-.promo-text{margin:7px 0 11px;color:var(--muted);font-size:10px;line-height:1.65}
-.promo-button{width:100%;padding:8px;border:1px solid var(--border);border-radius:9px;background:rgba(255,255,255,.035);font-size:11px}
-.profile{display:flex;align-items:center;gap:10px;padding:13px 5px 2px}
-.profile-avatar{display:grid;place-items:center;width:33px;height:33px;border:1px solid rgba(108,234,245,.25);border-radius:11px;background:linear-gradient(145deg,#173c50,#30284e);color:var(--cyan);font-size:12px;font-weight:800}
-.profile-name{font-size:11px;font-weight:700}
-.profile-caption{margin-top:4px;color:var(--muted);font-size:10px}
-/* Main */
+.app{display:flex;width:100%;height:100%;overflow:hidden;background:radial-gradient(ellipse at 70% -15%,rgba(106,91,228,.18),transparent 42%),radial-gradient(ellipse at 45% 110%,rgba(36,191,211,.08),transparent 40%),var(--bg)}
+.sidebar{z-index:20;display:flex;flex:0 0 265px;flex-direction:column;width:265px;padding:18px 13px;border-right:1px solid var(--border);background:rgba(10,12,25,.96);backdrop-filter:blur(24px);transition:transform .25s}
+.brand{display:flex;align-items:center;gap:11px;padding:4px 5px 23px}
+.logo{display:grid;place-items:center;width:43px;height:43px;border:1px solid #6ceaf577;border-radius:15px;background:linear-gradient(145deg,#6ceaf52b,#a99aff30);box-shadow:0 0 30px #6ceaf51a}
+.logo svg{width:28px;color:var(--cyan)}
+.brand-name{font-size:17px;font-weight:850;letter-spacing:1.7px}
+.brand-tag{margin-top:4px;color:var(--muted);font-size:9px;letter-spacing:1.6px}
+.side-btn{display:flex;align-items:center;gap:10px;width:100%;min-height:41px;padding:0 11px;margin-bottom:5px;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--muted);text-align:left;font-size:12px}
+.side-btn:hover,.side-btn.active{border-color:#6ceaf52b;background:linear-gradient(110deg,#6ceaf514,#a99aff12);color:var(--text)}
+.side-btn svg{width:17px;height:17px}
+.section-label{padding:15px 9px 9px;color:var(--faint);font-size:10px;font-weight:750;letter-spacing:1.6px}
+.search{width:100%;height:37px;padding:0 11px;border:1px solid var(--border);border-radius:10px;background:#ffffff06;color:var(--text);font-size:12px}
+.history{min-height:0;overflow:auto;margin-top:10px}
+.chat-item{display:flex;align-items:center;gap:4px;padding:4px;border:1px solid transparent;border-radius:10px}
+.chat-item.active{border-color:var(--border);background:#ffffff09}
+.chat-title{flex:1;min-width:0;overflow:hidden;padding:9px 5px;border:0;background:transparent;text-align:left;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:12px}
+.chat-item.active .chat-title{color:var(--text)}
+.small-btn{display:grid;place-items:center;width:28px;height:29px;border:0;border-radius:7px;background:transparent;color:var(--muted)}
+.small-btn:hover{background:#ffffff10;color:var(--text)}
+.small-btn svg{width:14px;height:14px}
+.sidebar-bottom{margin-top:auto}
+.promo{padding:13px;border:1px solid #a99aff30;border-radius:14px;background:radial-gradient(ellipse at 100% 0%,#a99aff20,transparent 60%),#ffffff04}
+.promo strong{font-size:11px}.promo p{color:var(--muted);font-size:10px;line-height:1.7}
+.profile{display:flex;align-items:center;gap:10px;padding:15px 5px 2px;font-size:11px}
+.avatar{display:grid;place-items:center;width:32px;height:32px;border:1px solid #6ceaf540;border-radius:11px;background:linear-gradient(145deg,#173c50,#30284e);color:var(--cyan);font-weight:800}
 .main{position:relative;display:flex;flex:1;flex-direction:column;min-width:0;height:100%}
-.topbar{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:68px;padding:0 26px;border-bottom:1px solid var(--border);background:rgba(8,9,20,.6);backdrop-filter:blur(20px)}
+.topbar{z-index:5;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:66px;padding:0 24px;border-bottom:1px solid var(--border);background:#080914a8;backdrop-filter:blur(20px)}
 .top-left,.top-right{display:flex;align-items:center;gap:10px;min-width:0}
-.icon-button{display:grid;place-items:center;width:37px;height:37px;flex-shrink:0;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,.025);color:var(--muted);transition:.18s}
-.icon-button:hover{border-color:rgba(108,234,245,.3);background:rgba(108,234,245,.06);color:var(--text)}
-.icon-button svg{width:17px;height:17px}
-.menu-button{display:none}
+.icon-btn{display:grid;place-items:center;width:37px;height:37px;flex-shrink:0;border:1px solid var(--border);border-radius:11px;background:#ffffff06;color:var(--muted)}
+.icon-btn:hover{border-color:#6ceaf555;color:var(--text)}
+.icon-btn svg{width:17px;height:17px}
+.menu-btn{display:none}
 .top-title{font-size:12px;font-weight:750}
-.top-subtitle{margin-top:4px;color:var(--muted);font-size:10px}
-.status-pill{display:flex;align-items:center;gap:7px;padding:8px 10px;border:1px solid rgba(108,234,245,.15);border-radius:99px;background:rgba(108,234,245,.04);color:var(--muted);font-size:10px;white-space:nowrap}
-.status-dot{width:6px;height:6px;flex-shrink:0;border-radius:50%;background:var(--cyan);box-shadow:0 0 11px rgba(108,234,245,.8)}
-/* Chat */
-.chat{position:relative;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(155,164,194,.2) transparent;scroll-behavior:smooth}
-.chat-inner{position:relative;width:min(100%,930px);min-height:100%;margin:0 auto;padding:28px 34px 30px}
-.welcome{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:min(650px,100%);padding:25px 0 40px;text-align:center;isolation:isolate}
-.particles{position:absolute;z-index:-1;inset:0;overflow:hidden;pointer-events:none;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 75%)}
-.particle{position:absolute;width:2px;height:2px;border-radius:50%;background:var(--cyan);opacity:.45;box-shadow:0 0 9px var(--cyan);animation:particle-drift var(--duration,8s) ease-in-out infinite alternate;animation-delay:var(--delay,0s)}
-.orb-wrap{position:relative;display:grid;place-items:center;width:138px;height:138px;margin-bottom:20px}
-.orb-ring{position:absolute;inset:5px;border:1px solid rgba(108,234,245,.2);border-radius:50%;animation:orbit 20s linear infinite}
+.top-sub{margin-top:4px;color:var(--muted);font-size:10px}
+.status{display:flex;align-items:center;gap:7px;padding:8px 10px;border:1px solid #6ceaf52a;border-radius:99px;color:var(--muted);font-size:10px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+.chat{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#ffffff22 transparent}
+.chat-inner{position:relative;width:min(100%,930px);min-height:100%;margin:auto;padding:28px 32px 30px}
+.welcome{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:min(650px,100%);padding:24px 0 38px;text-align:center}
+.particles{position:absolute;inset:0;overflow:hidden;pointer-events:none;mask-image:radial-gradient(ellipse at center,#000,transparent 75%)}
+.particle{position:absolute;width:2px;height:2px;border-radius:50%;background:var(--cyan);box-shadow:0 0 9px var(--cyan);opacity:.5;animation:drift var(--d,8s) ease-in-out infinite alternate}
+.orb-wrap{position:relative;display:grid;place-items:center;width:138px;height:138px;margin-bottom:22px}
+.orb-ring{position:absolute;inset:5px;border:1px solid #6ceaf535;border-radius:50%;animation:orbit 20s linear infinite}
 .orb-ring:before{position:absolute;top:10%;left:12%;width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 16px var(--cyan);content:""}
-.orb-ring.ring-two{inset:0;border-color:rgba(169,154,255,.2);transform:rotateX(64deg) rotate(20deg);animation:orbit-reverse 16s linear infinite}
-.orb-ring.ring-three{inset:15px;border-color:rgba(214,160,255,.14);transform:rotateX(64deg) rotate(-30deg);animation:orbit 24s linear infinite}
-.orb-core{position:relative;display:grid;place-items:center;width:82px;height:82px;border:1px solid rgba(108,234,245,.5);border-radius:28px;background:radial-gradient(circle at 30% 20%,rgba(108,234,245,.34),transparent 58%),linear-gradient(145deg,rgba(108,234,245,.13),rgba(169,154,255,.2));box-shadow:0 0 34px rgba(108,234,245,.14),0 0 80px rgba(169,154,255,.12),inset 0 0 26px rgba(108,234,245,.12);animation:core-breathe 4s ease-in-out infinite}
-.orb-core svg{width:43px;height:43px;color:var(--cyan);filter:drop-shadow(0 0 8px rgba(108,234,245,.35))}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;padding:7px 11px;border:1px solid rgba(108,234,245,.18);border-radius:99px;background:rgba(108,234,245,.04);color:var(--cyan);font-size:9px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase}
+.ring-two{inset:0;border-color:#a99aff40;animation:reverse 16s linear infinite}
+.ring-three{inset:15px;border-color:#d6a0ff25;animation:orbit 24s linear infinite}
+.orb-core{display:grid;place-items:center;width:82px;height:82px;border:1px solid #6ceaf580;border-radius:28px;background:radial-gradient(circle at 30% 20%,#6ceaf555,transparent 58%),linear-gradient(145deg,#6ceaf522,#a99aff33);box-shadow:0 0 34px #6ceaf524,0 0 80px #a99aff20,inset 0 0 26px #6ceaf51f;animation:breathe 4s ease-in-out infinite}
+.orb-core svg{width:43px;height:43px;color:var(--cyan);filter:drop-shadow(0 0 8px #6ceaf55c)}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;padding:7px 11px;border:1px solid #6ceaf52d;border-radius:99px;background:#6ceaf50a;color:var(--cyan);font-size:9px;font-weight:800;letter-spacing:1.6px}
 .welcome h1{max-width:680px;margin:0;font-size:clamp(34px,4.7vw,53px);font-weight:780;line-height:1.08;letter-spacing:-2px}
-.gradient-text{color:transparent;background:linear-gradient(100deg,#73ecf4 4%,#b5e4ff 43%,#b6a1ff 82%,#e0a9ff);-webkit-background-clip:text;background-clip:text}
+.gradient{color:transparent;background:linear-gradient(100deg,#73ecf4,#b5e4ff 43%,#b6a1ff 82%,#e0a9ff);-webkit-background-clip:text;background-clip:text}
 .welcome-copy{max-width:450px;margin:17px 0 27px;color:var(--muted);font-size:13px;line-height:1.85}
 .suggestions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:min(100%,610px);text-align:left}
-.suggestion{display:flex;align-items:flex-start;gap:11px;min-height:77px;padding:13px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.012));text-align:left;transition:transform .2s,border-color .2s,background .2s}
-.suggestion:hover{transform:translateY(-2px);border-color:rgba(108,234,245,.32);background:rgba(108,234,245,.045)}
-.suggestion-icon{display:grid;place-items:center;width:32px;height:32px;flex-shrink:0;border:1px solid rgba(108,234,245,.13);border-radius:10px;background:rgba(108,234,245,.06);color:var(--cyan)}
+.suggestion{display:flex;align-items:flex-start;gap:11px;padding:15px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(135deg,#ffffff07,#ffffff02);text-align:left;transition:.2s}
+.suggestion:hover{transform:translateY(-2px);border-color:#6ceaf54d;background:#6ceaf50a}
+.suggestion-icon{display:grid;place-items:center;width:31px;height:31px;flex-shrink:0;border:1px solid #a99aff2d;border-radius:10px;background:#a99aff12;color:var(--violet)}
 .suggestion-icon svg{width:16px;height:16px}
-.suggestion-title{margin:1px 0 5px;font-size:11px;font-weight:750}
-.suggestion-description{color:var(--muted);font-size:10px;line-height:1.5}
-/* Messages */
-.message{display:flex;align-items:flex-start;gap:11px;margin:0 0 24px;animation:rise-in .22s ease both}
-.message.user{flex-direction:row-reverse}
-.message-avatar{display:grid;place-items:center;width:33px;height:33px;flex-shrink:0;border:1px solid rgba(108,234,245,.17);border-radius:11px;background:linear-gradient(145deg,rgba(108,234,245,.09),rgba(169,154,255,.09));color:var(--cyan)}
-.message-avatar svg{width:17px;height:17px}
-.message.user .message-avatar{border-color:rgba(169,154,255,.25);background:rgba(169,154,255,.11);color:#c8bcff}
-.message-content{max-width:min(84%,730px);min-width:0}
-.message.user .message-content{text-align:right}
-.message-label{margin:2px 0 7px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
-.bubble{display:inline-block;max-width:100%;padding:12px 15px;border:1px solid var(--border);border-radius:4px 16px 16px 16px;background:linear-gradient(145deg,rgba(21,27,49,.97),rgba(13,17,33,.97));color:var(--text);font-size:13px;line-height:1.8;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere}
-.message.user .bubble{border-color:rgba(108,234,245,.17);border-radius:16px 4px 16px 16px;background:linear-gradient(135deg,rgba(22,58,78,.95),rgba(40,35,77,.96))}
-.message.error .bubble{border-color:rgba(255,141,167,.25);color:var(--danger)}
-.message-tools{display:flex;gap:5px;margin-top:6px}
-.message.user .message-tools{justify-content:flex-end}
-.tool-button{display:inline-flex;align-items:center;gap:5px;padding:5px 7px;border:1px solid transparent;border-radius:7px;background:transparent;color:var(--muted);font-size:10px}
-.tool-button:hover{border-color:var(--border);background:rgba(255,255,255,.04);color:var(--text)}
-.tool-button svg{width:13px;height:13px}
-.typing-bubble{display:flex;align-items:center;gap:6px;min-height:42px;padding:0 15px}
-.typing-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:typing 1s ease-in-out infinite}
+.suggestion strong{display:block;margin:1px 0 5px;font-size:11px}
+.suggestion span{display:block;color:var(--muted);font-size:10px;line-height:1.55}
+.message{display:flex;align-items:flex-start;gap:12px;margin:0 auto 25px;animation:appear .22s ease}
+.message-avatar{display:grid;place-items:center;width:31px;height:31px;flex-shrink:0;border:1px solid var(--border);border-radius:11px;background:#ffffff07;color:var(--cyan)}
+.message.user .message-avatar{color:var(--violet)}
+.message-avatar svg{width:16px;height:16px}
+.message-content{flex:1;min-width:0}
+.message-label{margin:3px 0 9px;color:var(--muted);font-size:10px;font-weight:750;letter-spacing:.5px}
+.bubble{overflow-wrap:anywhere;color:#e6e8fa;font-size:13px;line-height:1.85}
+.message.user .bubble{display:inline-block;padding:11px 14px;border:1px solid #a99aff24;border-radius:14px 14px 4px 14px;background:linear-gradient(135deg,#a99aff15,#6ceaf508);white-space:pre-wrap}
+.bubble p{margin:0 0 13px}.bubble p:last-child{margin-bottom:0}
+.bubble h1,.bubble h2,.bubble h3{margin:20px 0 9px;line-height:1.3;color:var(--text)}
+.bubble h1{font-size:20px}.bubble h2{font-size:17px}.bubble h3{font-size:14px}
+.bubble ul,.bubble ol{padding-left:23px}.bubble li{margin:5px 0}
+.bubble blockquote{margin:12px 0;padding:7px 13px;border-left:2px solid var(--violet);background:#a99aff0a;color:var(--muted)}
+.bubble a{color:var(--cyan);text-decoration:underline;text-underline-offset:3px}
+.bubble code{padding:2px 5px;border:1px solid var(--border);border-radius:5px;background:#ffffff09;color:#a9edfa;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.92em}
+.code-block{overflow:hidden;margin:13px 0;border:1px solid var(--border);border-radius:12px;background:#070a14}
+.code-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border);background:#ffffff05;color:var(--muted);font-size:10px}
+.code-copy{padding:5px 9px;border:1px solid var(--border);border-radius:7px;background:#ffffff07;color:var(--muted);font-size:10px}
+.code-block pre{overflow:auto;margin:0;padding:14px;color:#d9e9ff;font:12px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre}
+.message-tools{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.tool-btn{display:flex;align-items:center;gap:6px;padding:6px 8px;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--faint);font-size:10px}
+.tool-btn:hover{border-color:var(--border);background:#ffffff06;color:var(--text)}
+.tool-btn svg{width:13px;height:13px}
+.typing-bubble{display:flex;gap:5px;padding:12px 0}
+.typing-dot{width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:typing 1.1s infinite}
 .typing-dot:nth-child(2){animation-delay:.15s}.typing-dot:nth-child(3){animation-delay:.3s}
-/* Composer */
-.composer-area{position:relative;z-index:4;padding:12px 25px max(15px,env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 72%,rgba(8,9,20,.8))}
-.composer-wrap{width:min(100%,850px);margin:0 auto}
-.composer{display:flex;align-items:flex-end;gap:8px;padding:9px 9px 9px 13px;border:1px solid rgba(155,164,194,.23);border-radius:18px;background:rgba(18,23,43,.94);box-shadow:0 0 0 4px rgba(108,234,245,.015),0 15px 45px rgba(0,0,0,.19);transition:border-color .2s,box-shadow .2s}
-.composer:focus-within{border-color:rgba(108,234,245,.4);box-shadow:0 0 0 4px rgba(108,234,245,.045),0 15px 45px rgba(0,0,0,.19)}
-.composer-tool{display:grid;place-items:center;width:37px;height:39px;flex-shrink:0;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--muted);transition:.18s}
-.composer-tool:hover{border-color:var(--border);background:rgba(255,255,255,.04);color:var(--cyan)}
-.composer-tool svg{width:18px;height:18px}
-#messageInput{display:block;flex:1;width:100%;min-width:0;min-height:39px;max-height:170px;padding:9px 0;resize:none;overflow-y:auto;border:0;outline:none;background:transparent;color:var(--text);font-size:14px;line-height:1.55}
-#messageInput:focus-visible{outline:none}
-#messageInput::placeholder{color:var(--faint)}
-.send-button{display:grid;place-items:center;width:41px;height:41px;flex-shrink:0;border:1px solid rgba(108,234,245,.35);border-radius:12px;background:linear-gradient(140deg,#76edf4,#90d4fa 58%,#b09aff);color:#09101d;box-shadow:0 0 23px rgba(108,234,245,.12);transition:filter .2s,transform .2s}
-.send-button:hover{filter:brightness(1.08);transform:translateY(-1px)}
-.send-button svg{width:19px;height:19px}
-.composer-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:9px 4px 0;color:var(--faint);font-size:9px}
-.composer-hint{display:flex;align-items:center;gap:6px}
-.composer-hint svg{width:12px;height:12px;color:var(--cyan)}
-/* Settings & dialogs */
-.overlay{position:fixed;z-index:50;inset:0;display:none;background:rgba(0,0,0,.59);backdrop-filter:blur(5px)}
-.overlay.open{display:block;animation:fade-in .18s ease}
-.panel{position:absolute;top:0;right:0;display:flex;flex-direction:column;width:min(420px,100%);height:100%;padding:23px;border-left:1px solid var(--border);background:var(--surface);box-shadow:var(--shadow);animation:slide-in .22s ease;overflow-y:auto}
-.panel-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
-.panel-header h2{margin:0;font-size:20px}
-.panel-description{margin:0 0 22px;color:var(--muted);font-size:12px;line-height:1.7}
-.setting-group{margin-bottom:13px;padding:15px;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,.018)}
-.setting-heading{margin-bottom:6px;font-size:12px;font-weight:750}
-.setting-help{margin-bottom:12px;color:var(--muted);font-size:10px;line-height:1.7}
-.setting-select,.dialog-input{width:100%;padding:11px;border:1px solid var(--border);border-radius:10px;background:var(--surface2);color:var(--text);font-size:12px}
-.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.toggle{position:relative;width:43px;height:25px;flex-shrink:0;border:1px solid var(--border);border-radius:30px;background:var(--surface3)}
-.toggle:after{position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:var(--muted);content:"";transition:.2s}
-.toggle[aria-checked="true"]{border-color:rgba(108,234,245,.4);background:rgba(108,234,245,.18)}
-.toggle[aria-checked="true"]:after{left:21px;background:var(--cyan)}
-.danger-button{width:100%;padding:10px;border:1px solid rgba(255,141,167,.23);border-radius:10px;background:rgba(255,141,167,.05);color:var(--danger);text-align:left;font-size:11px}
-.panel-footer{margin-top:auto;padding-top:18px;color:var(--faint);font-size:10px;line-height:1.7}
-.dialog-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:18px}
-.dialog-card{width:min(410px,100%);padding:21px;border:1px solid var(--border);border-radius:18px;background:var(--surface);box-shadow:var(--shadow)}
-.dialog-card h3{margin:0 0 8px;font-size:17px}
-.dialog-card p{margin:0 0 16px;color:var(--muted);font-size:11px;line-height:1.7}
-.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
-.dialog-button{padding:9px 13px;border:1px solid var(--border);border-radius:9px;background:var(--surface2);font-size:11px}
-.dialog-button.primary{border-color:rgba(108,234,245,.3);background:rgba(108,234,245,.12);color:var(--cyan)}
-.dialog-button.danger{border-color:rgba(255,141,167,.25);color:var(--danger)}
-.toast{position:fixed;z-index:90;bottom:95px;left:50%;max-width:calc(100vw - 30px);padding:10px 14px;transform:translate(-50%,12px);border:1px solid var(--border);border-radius:10px;background:var(--surface2);color:var(--text);font-size:11px;opacity:0;pointer-events:none;transition:.2s}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-/* Light theme */
-body.light{color-scheme:light;--bg:#f3f6fc;--surface:#fff;--surface2:#f0f4fb;--surface3:#e1e8f4;--border:rgba(50,68,105,.14);--text:#19233d;--muted:#65718c;--faint:#8993a9;--cyan:#078fa8;--violet:#7664dc;--pink:#a46bd7;--danger:#c43d60;--shadow:0 24px 80px rgba(35,50,80,.17)}
-body.light .app{background:radial-gradient(ellipse at 70% -15%,rgba(106,91,228,.09),transparent 42%),radial-gradient(ellipse at 45% 110%,rgba(36,191,211,.06),transparent 40%),var(--bg)}
-body.light .sidebar{background:rgba(255,255,255,.94)}
-body.light .topbar{background:rgba(255,255,255,.72)}
-body.light .bubble{background:#fff}
-body.light .message.user .bubble{background:linear-gradient(135deg,#e0f5fa,#ece9ff);color:#19233d}
-body.light .composer{background:rgba(255,255,255,.96)}
-body.light .composer-area{background:linear-gradient(to top,var(--bg) 72%,rgba(243,246,252,.85))}
-body.light .suggestion{background:rgba(255,255,255,.78)}
-body.light .sidebar-promo{background:rgba(118,100,220,.035)}
-/* Animation */
-@keyframes rise-in{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fade-in{from{opacity:0}to{opacity:1}}
-@keyframes slide-in{from{opacity:.6;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
-@keyframes orbit{to{transform:rotate(360deg)}}
-@keyframes orbit-reverse{to{transform:rotate(-360deg)}}
-@keyframes core-breathe{0%,100%{box-shadow:0 0 30px rgba(108,234,245,.12),0 0 70px rgba(169,154,255,.1),inset 0 0 22px rgba(108,234,245,.1)}50%{box-shadow:0 0 45px rgba(108,234,245,.22),0 0 95px rgba(169,154,255,.16),inset 0 0 28px rgba(108,234,245,.17)}}
-@keyframes particle-drift{from{transform:translate3d(0,0,0);opacity:.16}to{transform:translate3d(13px,-22px,0);opacity:.7}}
-@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
-/* Responsive */
-@media(min-width:1500px){:root{--sidebar:290px}.chat-inner{width:min(100%,960px)}}
-@media(max-width:900px){:root{--sidebar:245px}.topbar{padding:0 18px}.chat-inner{padding:23px 21px}.composer-area{padding-right:18px;padding-left:18px}}
-@media(max-width:680px){
- body{overscroll-behavior:none}
- .sidebar{position:fixed;z-index:35;top:0;bottom:0;left:0;width:min(295px,87vw);height:100dvh;transform:translateX(-105%);box-shadow:var(--shadow)}
- .sidebar.mobile-open{transform:translateX(0)}
- .menu-button{display:grid}
- .topbar{min-height:60px;padding:0 12px}
- .top-left,.top-right{gap:7px}
- .top-title{font-size:11px}.top-subtitle{font-size:9px}
- .topbar .icon-button{width:35px;height:35px}
- .status-pill{padding:7px 8px;font-size:9px}
- .chat-inner{padding:15px 13px 22px}
- .welcome{min-height:100%;padding:23px 0 28px}
- .orb-wrap{width:116px;height:116px;margin-bottom:17px}
- .orb-core{width:72px;height:72px;border-radius:24px}
- .orb-core svg{width:37px;height:37px}
- .welcome h1{font-size:clamp(31px,8vw,42px);letter-spacing:-1.3px}
- .welcome-copy{max-width:335px;margin:14px 0 22px;font-size:12px}
+.composer-area{position:relative;z-index:4;padding:12px 22px max(15px,env(safe-area-inset-bottom));background:linear-gradient(transparent,#080914 24%)}
+.composer-inner{width:min(100%,800px);margin:auto}
+.composer{padding:11px 12px 10px;border:1px solid #a99aff35;border-radius:19px;background:linear-gradient(145deg,#14172aee,#0c1020f5);box-shadow:0 10px 45px #0004,0 0 30px #a99aff0a;backdrop-filter:blur(18px)}
+.composer:focus-within{border-color:#6ceaf566;box-shadow:0 10px 45px #0004,0 0 26px #6ceaf50d}
+.edit-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;padding:8px 11px;border:1px solid #a99aff35;border-radius:9px;color:var(--muted);font-size:11px}
+.edit-banner button{border:0;background:transparent;color:var(--cyan);font-size:11px}
+#messageInput{display:block;width:100%;min-height:29px;max-height:170px;resize:none;overflow-y:auto;border:0;outline:0;background:transparent;color:var(--text);font-size:13px;line-height:1.7}
+#messageInput::placeholder{color:#747d9e}
+.composer-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:7px}
+.composer-left,.composer-right{display:flex;align-items:center;gap:6px}
+.composer-note{color:var(--faint);font-size:9px}
+.send-btn{display:grid;place-items:center;width:37px;height:37px;border:1px solid #6ceaf56b;border-radius:12px;background:linear-gradient(135deg,#6ceaf527,#a99aff30);color:var(--cyan);box-shadow:0 0 18px #6ceaf50b}
+.send-btn svg{width:18px;height:18px}
+.send-btn.is-stop{border-color:#ff8da766;color:#ff9cb2;background:#ff8da71c}
+#fileInput{display:none}
+.file-chip{display:flex;align-items:center;gap:7px;margin:7px 0 0;padding:7px 9px;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:10px}
+.file-chip button{margin-left:auto;border:0;background:transparent;color:var(--muted)}
+.toast{position:absolute;z-index:50;bottom:112px;left:50%;max-width:90%;padding:11px 15px;transform:translateX(-50%);border:1px solid var(--border);border-radius:11px;background:#171a30;color:var(--text);font-size:11px;box-shadow:0 10px 35px #0006}
+.modal-backdrop{position:fixed;z-index:80;inset:0;display:grid;place-items:center;padding:18px;background:#0009;backdrop-filter:blur(8px)}
+.modal{width:min(100%,420px);padding:20px;border:1px solid var(--border);border-radius:18px;background:#101324;box-shadow:0 25px 90px #0008}
+.modal h2{margin:0 0 8px;font-size:17px}.modal p{color:var(--muted);font-size:12px;line-height:1.7}
+.modal input{width:100%;margin:10px 0;padding:11px;border:1px solid var(--border);border-radius:10px;background:#ffffff07;color:var(--text)}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.modal-actions button{padding:9px 13px;border:1px solid var(--border);border-radius:9px;background:#ffffff08;font-size:11px}
+.modal-actions .confirm{border-color:#6ceaf555;background:#6ceaf51a;color:var(--cyan)}
+@keyframes orbit{to{transform:rotate(360deg)}}@keyframes reverse{to{transform:rotate(-360deg)}}
+@keyframes breathe{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.045);filter:brightness(1.2)}}
+@keyframes drift{to{transform:translate(13px,-22px);opacity:.8}}
+@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-4px);opacity:1}}
+@keyframes appear{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media(min-width:1500px){.sidebar{flex-basis:285px;width:285px}.chat-inner{width:min(100%,960px)}}
+@media(max-width:760px){
+ .sidebar{position:absolute;inset:0 auto 0 0;width:min(285px,86vw);transform:translateX(-102%);box-shadow:20px 0 60px #0007}
+ .sidebar.open{transform:translateX(0)}
+ .menu-btn{display:grid}
+ .topbar{min-height:59px;padding:0 13px}
+ .chat-inner{padding:19px 16px 24px}
+ .welcome{min-height:100%;padding:14px 0 25px}
+ .orb-wrap{width:116px;height:116px;margin-bottom:18px}
+ .orb-core{width:70px;height:70px;border-radius:24px}
+ .orb-core svg{width:36px;height:36px}
+ .welcome h1{font-size:clamp(32px,9vw,45px);letter-spacing:-1.4px}
+ .welcome-copy{max-width:340px;margin:14px 0 23px;font-size:12px}
  .suggestions{grid-template-columns:1fr;gap:8px}
- .suggestion{min-height:63px;padding:10px 12px}
- .composer-area{padding:9px 10px max(11px,env(safe-area-inset-bottom))}
- .composer{gap:4px;padding:6px;border-radius:16px}
- .composer-tool{width:34px;height:38px}
- #messageInput{min-height:38px;padding:8px 2px;font-size:16px}
- .send-button{width:39px;height:39px}
- .composer-meta{margin-top:7px;font-size:9px}
- .message{gap:8px;margin-bottom:20px}
- .message-avatar{width:29px;height:29px;border-radius:9px}
- .message-content{max-width:calc(100% - 37px)}
- .bubble{padding:10px 12px;font-size:13px;line-height:1.7}
- .panel{padding:19px 16px max(18px,env(safe-area-inset-bottom))}
+ .suggestion{padding:12px}
+ .suggestion-icon{width:29px;height:29px}
+ .composer-area{padding:9px 10px max(10px,env(safe-area-inset-bottom))}
+ .composer{padding:9px 10px;border-radius:16px}
+ .composer-note{display:none}
+ .status{padding:7px 8px;font-size:9px}
+ .top-sub{font-size:9px}
+ .top-title{font-size:11px}
+ .message{gap:9px;margin-bottom:21px}
+ .message-avatar{width:29px;height:29px}
+ .bubble{font-size:13px}
 }
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+@media(max-width:380px){.status{display:none}.topbar{padding:0 10px}.suggestion{gap:8px}.welcome h1{font-size:31px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
 </style>
 </head>
 
 <body>
 <div class="app">
-  <aside class="sidebar" id="sidebar" aria-label="CLIPA workspace">
+  <aside class="sidebar" id="sidebar">
     <div class="brand">
-      <div class="brand-logo" aria-hidden="true">
-        <svg viewBox="0 0 32 32" fill="none"><path d="M16 3.5 27 10v12L16 28.5 5 22V10L16 3.5Z" stroke="currentColor" stroke-width="1.4"/><path d="m11 19 5-10 5 10m-7.5-4h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <div><div class="brand-name">CLIPA AI</div><div class="brand-tag">Intelligence, evolved</div></div>
+      <div class="logo" id="brandLogo"></div>
+      <div><div class="brand-name">CLIPA AI</div><div class="brand-tag">INTELLIGENCE, EVOLVED</div></div>
     </div>
 
-    <div class="section-label">Workspace</div>
-    <button class="side-button primary" id="newChatButton">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-      New conversation
-    </button>
-    <button class="side-button" id="settingsButton">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 13.5a7 7 0 0 0 0-3l1.4-1-1.6-2.7-1.6.6a7 7 0 0 0-2-1.1L15 4.5h-3l-.3 1.8a7 7 0 0 0-2 1.1l-1.6-.6-1.6 2.7 1.4 1a7 7 0 0 0 0 3l-1.4 1 1.6 2.7 1.6-.6a7 7 0 0 0 2 1.1l.3 1.8h3l.3-1.8a7 7 0 0 0 2-1.1l1.6.6 1.6-2.7-1.4-1Z" transform="translate(-1 -1)"/></svg>
-      Settings
-    </button>
+    <button class="side-btn active" id="newChatBtn"></button>
+    <button class="side-btn" id="exportBtn"></button>
+    <button class="side-btn" id="importBtn"></button>
+    <input id="importFile" type="file" accept="application/json,.json" hidden>
 
-    <div class="side-divider"></div>
-    <div class="section-label">Your conversations</div>
-    <div class="search-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4 4"/></svg>
-      <input class="search-input" id="searchInput" type="search" placeholder="Search conversations..." aria-label="Search saved conversations">
-    </div>
-    <div class="history-list" id="historyList"></div>
+    <div class="section-label">YOUR CONVERSATIONS</div>
+    <input class="search" id="searchInput" placeholder="⌕  Search conversations…" autocomplete="off">
+    <div class="history" id="historyList"></div>
 
-    <div class="sidebar-spacer"></div>
-    <div class="sidebar-promo">
-      <div class="promo-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.6 5.4 5.9.6-4.3 4.2 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9l5.9-.6L12 3Z"/></svg>
-        Built for curiosity
-      </div>
-      <div class="promo-text">Ask questions, explore ideas, and keep learning with your AI companion.</div>
-      <button class="promo-button" id="exploreButton">Explore CLIPA AI ↗</button>
-    </div>
-    <div class="profile">
-      <div class="profile-avatar">C</div>
-      <div><div class="profile-name">CLIPA AI</div><div class="profile-caption">Personal AI assistant</div></div>
+    <div class="sidebar-bottom">
+      <div class="promo"><strong>✦ A space for your ideas</strong><p>Your conversations are saved locally in this browser. Export a backup if you want to keep a separate copy.</p></div>
+      <div class="profile"><div class="avatar">C</div><div><strong>CLIPA Workspace</strong><div style="margin-top:4px;color:var(--muted)">Personal AI assistant</div></div></div>
     </div>
   </aside>
 
   <main class="main">
     <header class="topbar">
       <div class="top-left">
-        <button class="icon-button menu-button" id="menuButton" aria-label="Open sidebar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-        </button>
-        <div><div class="top-title">CLIPA AI <span style="color:var(--cyan)">/</span> Assistant</div><div class="top-subtitle" id="topSubtitle">Your space to think bigger.</div></div>
+        <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open sidebar"></button>
+        <div><div class="top-title" id="headerTitle">A new perspective</div><div class="top-sub">Your ideas, in motion</div></div>
       </div>
       <div class="top-right">
-        <div class="status-pill"><span class="status-dot"></span> AI workspace</div>
-        <button class="icon-button" id="topSettingsButton" aria-label="Open settings" title="Settings">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19 13.5a7 7 0 0 0 0-3l1.4-1-1.6-2.7-1.6.6a7 7 0 0 0-2-1.1L15 4.5h-3l-.3 1.8a7 7 0 0 0-2 1.1l-1.6-.6-1.6 2.7 1.4 1a7 7 0 0 0 0 3l-1.4 1 1.6 2.7 1.6-.6a7 7 0 0 0 2 1.1l.3 1.8h3l.3-1.8a7 7 0 0 0 2-1.1l1.6.6 1.6-2.7-1.4-1Z" transform="translate(-1 -1)"/></svg>
-        </button>
+        <div class="status"><span class="dot"></span><span id="statusText">AI workspace</span></div>
+        <button class="icon-btn" id="clearBtn" title="New conversation" aria-label="New conversation"></button>
       </div>
     </header>
 
-    <section class="chat" id="chat" aria-label="Conversation" aria-live="polite">
+    <section class="chat" id="chatArea">
       <div class="chat-inner" id="chatInner"></div>
     </section>
 
-    <footer class="composer-area">
-      <div class="composer-wrap">
+    <div class="composer-area">
+      <div class="composer-inner">
+        <div id="editBanner" class="edit-banner" hidden></div>
         <form class="composer" id="chatForm">
-          <button class="composer-tool" id="attachButton" type="button" aria-label="Attach a text file" title="Attach a text file">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m8 12.5 6.8-6.8a4 4 0 0 1 5.7 5.7l-8.8 8.8a6 6 0 0 1-8.5-8.5l8.2-8.2"/></svg>
-          </button>
-          <input id="fileInput" type="file" accept=".txt,.md,.csv,.json,.js,.py,.html,.css,.xml,.log,.c,.cpp,.java" hidden>
-          <textarea id="messageInput" rows="1" maxlength="6000" placeholder="Message CLIPA AI..." aria-label="Message CLIPA AI"></textarea>
-          <button class="composer-tool" id="voiceButton" type="button" aria-label="Voice input" title="Voice input" hidden>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="12" rx="3"/><path d="M5.5 10.5a6.5 6.5 0 0 0 13 0M12 17v4m-4 0h8"/></svg>
-          </button>
-          <button class="send-button" id="sendButton" type="submit" aria-label="Send message">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
-          </button>
+          <textarea id="messageInput" rows="1" maxlength="6000" placeholder="Ask CLIPA anything…"></textarea>
+          <div id="fileChip" class="file-chip" hidden></div>
+          <div class="composer-bottom">
+            <div class="composer-left">
+              <button type="button" class="icon-btn" id="attachBtn" title="Attach a text or code file" aria-label="Attach file"></button>
+              <input id="fileInput" type="file" accept=".txt,.md,.csv,.json,.js,.ts,.py,.c,.cpp,.html,.css,.xml,.log">
+              <button type="button" class="icon-btn" id="voiceBtn" title="Voice input" aria-label="Voice input"></button>
+              <span class="composer-note">Enter to send · Shift + Enter for a new line</span>
+            </div>
+            <div class="composer-right">
+              <span class="composer-note" id="charCount">0 / 6000</span>
+              <button class="send-btn" id="sendBtn" type="submit" aria-label="Send message"></button>
+            </div>
+          </div>
         </form>
-        <div class="composer-meta">
-          <span class="composer-hint">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/><circle cx="12" cy="12" r="4"/></svg>
-            <span id="composerHint">Curious minds go further.</span>
-          </span>
-          <span id="characterCount">0 / 6000</span>
-        </div>
       </div>
-    </footer>
+    </div>
   </main>
 </div>
-
-<div class="overlay" id="settingsOverlay" aria-hidden="true">
-  <section class="panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-    <div class="panel-header"><h2 id="settingsTitle">Settings</h2><button class="icon-button" id="closeSettings" aria-label="Close settings">✕</button></div>
-    <p class="panel-description">Make your CLIPA AI workspace feel right for you.</p>
-    <div class="setting-group">
-      <div class="setting-heading">Appearance</div>
-      <div class="setting-help">Choose the visual theme.</div>
-      <select class="setting-select" id="themeSelect"><option value="dark">Cinematic dark</option><option value="light">Clean light</option></select>
-    </div>
-    <div class="setting-group">
-      <div class="toggle-row"><div><div class="setting-heading">Enter to send</div><div class="setting-help" style="margin:5px 0 0">Shift + Enter inserts a new line.</div></div><button class="toggle" id="enterToggle" role="switch" aria-checked="true" aria-label="Enter to send"></button></div>
-    </div>
-    <div class="setting-group">
-      <div class="setting-heading">Local conversation storage</div>
-      <div class="setting-help" id="storageStatus">Conversations are saved in this browser when storage is available. They are not synced to other devices.</div>
-      <button class="danger-button" id="clearAllChats">Delete all saved conversations</button>
-    </div>
-    <div class="setting-group">
-      <div class="setting-heading">Voice input</div>
-      <div class="setting-help" id="voiceStatus">Voice input availability depends on your browser and device. Audio is processed by the browser's speech recognition implementation, if available.</div>
-    </div>
-    <div class="panel-footer">CLIPA AI · Saved chats remain in this browser. Avoid storing confidential information on a shared device.</div>
-  </section>
-</div>
-
-<div class="overlay" id="dialogOverlay" aria-hidden="true">
-  <section class="dialog-center">
-    <div class="dialog-card" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
-      <h3 id="dialogTitle">Conversation</h3>
-      <p id="dialogDescription"></p>
-      <input class="dialog-input" id="dialogInput" maxlength="100" hidden>
-      <div class="dialog-actions">
-        <button class="dialog-button" id="dialogCancel">Cancel</button>
-        <button class="dialog-button primary" id="dialogConfirm">Confirm</button>
-      </div>
-    </div>
-  </section>
-</div>
-
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div id="toast" class="toast" hidden></div>
+<div id="modalRoot"></div>
 
 <script>
-(() => {
-  "use strict";
+"use strict";
 
-  // Existing Cloudflare Worker endpoint — do not change.
-  const API_URL = "https://clipa-ai-free.ademrouis.workers.dev/";
+const API_URL = "https://clipa-ai-free.ademrouis.workers.dev/";
+const STORAGE_KEY = "clipa_cinematic_conversations_v1";
+const LEGACY_KEYS = ["clipa_cinematic_conversations_v1"];
+const $ = id => document.getElementById(id);
 
-  const $ = id => document.getElementById(id);
-  const STORAGE_KEY = "clipa_saved_conversations_v1";
-  const PREF_KEY = "clipaPreferences";
-  const MAX_CHATS = 100;
-  const MAX_HISTORY = 24;
-  const MAX_FILE_CHARS = 20000;
+const ICONS = {
+  ai:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.8l2.5 6.7 6.7 2.5-6.7 2.5-2.5 6.7-2.5-6.7-6.7-2.5 6.7-2.5z"/><circle cx="12" cy="12" r="2"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>',
+  menu:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
+  attach:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 11.5l-8.8 8.8a5.5 5.5 0 01-7.8-7.8l9.2-9.2a3.7 3.7 0 015.2 5.2l-9.2 9.2a1.8 1.8 0 01-2.6-2.6l8.5-8.5"/></svg>',
+  mic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3m-4 0h8"/></svg>',
+  send:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>',
+  stop:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="7" width="10" height="10" rx="2"/></svg>',
+  copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 00-1-1H5a1 1 0 00-1 1v10a1 1 0 001 1h3"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L8 18l-4 1 1-4z"/></svg>',
+  download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v12m-5-5l5 5 5-5M4 20h16"/></svg>',
+  upload:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 16V4m-5 5l5-5 5 5M4 20h16"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M10 11v6m4-6v6M5 7l1 14h12l1-14M9 7V4h6v3"/></svg>',
+  rename:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20h4l11-11a2.8 2.8 0 00-4-4L4 16zM13.5 6.5l4 4"/></svg>',
+  refresh:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0118 6l2 6M4 12l2 6a7 7 0 0012.5-3"/></svg>'
+};
 
-  const sidebar = $("sidebar");
-  const chat = $("chat");
-  const chatInner = $("chatInner");
-  const form = $("chatForm");
-  const input = $("messageInput");
-  const sendButton = $("sendButton");
-  const historyList = $("historyList");
-  const searchInput = $("searchInput");
-  const settingsOverlay = $("settingsOverlay");
-  const dialogOverlay = $("dialogOverlay");
-  const dialogInput = $("dialogInput");
+$("brandLogo").innerHTML = ICONS.ai;
+$("newChatBtn").innerHTML = ICONS.plus + "<span>New conversation</span>";
+$("exportBtn").innerHTML = ICONS.download + "<span>Export backup</span>";
+$("importBtn").innerHTML = ICONS.upload + "<span>Restore backup</span>";
+$("menuBtn").innerHTML = ICONS.menu;
+$("clearBtn").innerHTML = ICONS.plus;
+$("attachBtn").innerHTML = ICONS.attach;
+$("voiceBtn").innerHTML = ICONS.mic;
+$("sendBtn").innerHTML = ICONS.send;
 
-  let conversations = [];
-  let currentId = null;
-  let isSending = false;
-  let controller = null;
-  let toastTimer = null;
-  let dialogResolver = null;
-  let recognition = null;
-  let isListening = false;
-  let storageAvailable = true;
+let conversations = loadConversations();
+let currentId = null;
+let isSending = false;
+let controller = null;
+let pendingEdit = null;
+let attachedFileText = "";
+let attachedFileName = "";
+let toastTimer = null;
 
-  const preferences = { theme: "dark", enterToSend: true };
+const chatInner = $("chatInner");
+const input = $("messageInput");
+const chatArea = $("chatArea");
+const form = $("chatForm");
+const sendButton = $("sendBtn");
 
-  function makeId() {
-    return "chat_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 9);
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,9)}
+function safeTitle(text){return String(text||"New conversation").replace(/\s+/g," ").trim().slice(0,65)||"New conversation"}
+
+function loadConversations(){
+  for(const key of LEGACY_KEYS){
+    try{
+      const value=JSON.parse(localStorage.getItem(key)||"null");
+      if(Array.isArray(value)) return value.filter(c=>c&&typeof c==="object").map(c=>({
+        id:String(c.id||uid()),
+        title:safeTitle(c.title),
+        messages:Array.isArray(c.messages)?c.messages.filter(m=>m&&["user","assistant"].includes(m.role)&&typeof m.content==="string").map(m=>({role:m.role,content:m.content})):[],
+        updatedAt:Number(c.updatedAt)||Date.now(),
+        pinned:!!c.pinned
+      }));
+    }catch(e){}
   }
+  return [];
+}
+function persist(){
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(conversations))}
+  catch(e){showToast("Browser storage is full. Export a backup or delete old conversations.");}
+}
+function currentChat(){return conversations.find(c=>c.id===currentId)||null}
+function ensureChat(firstMessage=""){
+  let c=currentChat();
+  if(!c){
+    c={id:uid(),title:safeTitle(firstMessage),messages:[],updatedAt:Date.now(),pinned:false};
+    conversations.unshift(c);currentId=c.id;
+  }
+  if(!c.messages.length&&firstMessage)c.title=safeTitle(firstMessage);
+  c.updatedAt=Date.now();
+  return c;
+}
+function sortConversations(){
+  conversations.sort((a,b)=>(Number(b.pinned)-Number(a.pinned))||((b.updatedAt||0)-(a.updatedAt||0)));
+}
+function showToast(message){
+  const t=$("toast");t.textContent=message;t.hidden=false;
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.hidden=true,2600);
+}
+function scrollBottom(){requestAnimationFrame(()=>{chatArea.scrollTop=chatArea.scrollHeight})}
 
-  function safeRead(key, fallback) {
-    try {
-      const value = localStorage.getItem(key);
-      return value ? JSON.parse(value) : fallback;
-    } catch (_) {
-      return fallback;
+function svgIcon(name){const el=document.createElement("span");el.innerHTML=ICONS[name]||ICONS.ai;return el.firstElementChild}
+
+function makeParticles(container){
+  const layer=document.createElement("div");layer.className="particles";
+  for(let i=0;i<32;i++){
+    const p=document.createElement("span");p.className="particle";
+    p.style.left=(Math.random()*100)+"%";p.style.top=(Math.random()*100)+"%";
+    p.style.setProperty("--d",(5+Math.random()*8)+"s");
+    p.style.animationDelay=(-Math.random()*8)+"s";layer.appendChild(p);
+  }
+  container.appendChild(layer);
+}
+
+function renderWelcome(){
+  const wrap=document.createElement("div");wrap.className="welcome";
+  makeParticles(wrap);
+  const orb=document.createElement("div");orb.className="orb-wrap";
+  for(const cls of ["orb-ring","orb-ring ring-two","orb-ring ring-three"]){
+    const ring=document.createElement("div");ring.className=cls;orb.appendChild(ring);
+  }
+  const core=document.createElement("div");core.className="orb-core";core.innerHTML=ICONS.ai;orb.appendChild(core);
+  const eyebrow=document.createElement("div");eyebrow.className="eyebrow";eyebrow.innerHTML='<span class="dot"></span> YOUR AI, REIMAGINED';
+  const h=document.createElement("h1");h.innerHTML='Think beyond<br><span class="gradient">the ordinary.</span>';
+  const copy=document.createElement("p");copy.className="welcome-copy";copy.textContent="A new space for learning, creating, solving problems and turning ideas into something real.";
+  const suggestions=document.createElement("div");suggestions.className="suggestions";
+  const cards=[
+    ["ai","Learn something new","Explain a complex topic in simple terms.","Explain how artificial intelligence works."],
+    ["edit","Build something","Help me plan a project from scratch.","Help me plan a beginner programming project."],
+    ["refresh","Solve a problem","Work through a question step by step.","Help me solve a problem step by step."],
+    ["download","Write and create","Turn a rough idea into a clear draft.","Help me write a professional introduction."]
+  ];
+  cards.forEach(([icon,title,desc,prompt])=>{
+    const b=document.createElement("button");b.className="suggestion";
+    const ic=document.createElement("span");ic.className="suggestion-icon";ic.appendChild(svgIcon(icon));
+    const txt=document.createElement("span");const strong=document.createElement("strong");strong.textContent=title;
+    const sub=document.createElement("span");sub.textContent=desc;txt.append(strong,sub);b.append(ic,txt);
+    b.addEventListener("click",()=>{input.value=prompt;updateInputUI();input.focus();});
+    suggestions.appendChild(b);
+  });
+  wrap.append(orb,eyebrow,h,copy,suggestions);
+  return wrap;
+}
+
+/* Safe Markdown rendering: text nodes are used instead of injecting model HTML. */
+function appendInline(parent,text){
+  const pattern=/(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*|~~[^~]+~~|\[[^\]]+\]\(https?:\/\/[^\s)]+\))/g;
+  let pos=0,match;
+  while((match=pattern.exec(text))){
+    parent.appendChild(document.createTextNode(text.slice(pos,match.index)));
+    const token=match[0];let node;
+    if(token.startsWith("**")){node=document.createElement("strong");node.textContent=token.slice(2,-2)}
+    else if(token.startsWith("~~")){node=document.createElement("del");node.textContent=token.slice(2,-2)}
+    else if(token.startsWith("*")){node=document.createElement("em");node.textContent=token.slice(1,-1)}
+    else if(token.startsWith("`")){node=document.createElement("code");node.textContent=token.slice(1,-1)}
+    else{
+      const matchLink=token.match(/^\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/);
+      node=document.createElement("a");node.textContent=matchLink[1];node.href=matchLink[2];
+      node.target="_blank";node.rel="noopener noreferrer";
     }
+    parent.appendChild(node);pos=pattern.lastIndex;
   }
-
-  function savePreferences() {
-    try { localStorage.setItem(PREF_KEY, JSON.stringify(preferences)); } catch (_) {}
+  parent.appendChild(document.createTextNode(text.slice(pos)));
+}
+function renderMarkdown(container,text){
+  const lines=String(text||"").replace(/\r\n/g,"\n").split("\n");
+  let i=0,paragraph=[];
+  function flush(){
+    if(!paragraph.length)return;
+    const p=document.createElement("p");appendInline(p,paragraph.join("\n"));container.appendChild(p);paragraph=[];
   }
-
-  function loadPreferences() {
-    const saved = safeRead(PREF_KEY, {});
-    if (saved && saved.theme === "light") preferences.theme = "light";
-    if (saved && typeof saved.enterToSend === "boolean") preferences.enterToSend = saved.enterToSend;
-  }
-
-  function loadConversations() {
-    const saved = safeRead(STORAGE_KEY, []);
-    conversations = Array.isArray(saved) ? saved.filter(c =>
-      c && typeof c.id === "string" &&
-      typeof c.title === "string" &&
-      Array.isArray(c.messages)
-    ).map(c => ({
-      id: c.id,
-      title: c.title.slice(0, 100),
-      updatedAt: Number(c.updatedAt) || Date.now(),
-      messages: c.messages.filter(m =>
-        m && (m.role === "user" || m.role === "assistant") &&
-        typeof m.content === "string"
-      ).slice(-MAX_HISTORY)
-    })) : [];
-    conversations.sort((a,b) => b.updatedAt - a.updatedAt);
-  }
-
-  function persistConversations() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations));
-      storageAvailable = true;
-      $("storageStatus").textContent = "Saved chats are stored locally in this browser. They are not synced to other devices.";
-      return true;
-    } catch (_) {
-      storageAvailable = false;
-      $("storageStatus").textContent = "Browser storage is unavailable or full. Chats may not survive a reload. Try deleting old conversations or freeing browser storage.";
-      showToast("Could not save chats. Browser storage may be full.");
-      return false;
+  while(i<lines.length){
+    const line=lines[i];
+    if(/^\s*```/.test(line)){
+      flush();const language=line.replace(/^\s*```/,"").trim()||"code";const codeLines=[];i++;
+      while(i<lines.length&&!/^\s*```/.test(lines[i]))codeLines.push(lines[i++]);
+      if(i<lines.length)i++;
+      const block=document.createElement("div");block.className="code-block";
+      const head=document.createElement("div");head.className="code-head";
+      const label=document.createElement("span");label.textContent=language;
+      const copy=document.createElement("button");copy.type="button";copy.className="code-copy";copy.textContent="Copy code";
+      const codeText=codeLines.join("\n");copy.addEventListener("click",()=>copyText(codeText,copy));
+      head.append(label,copy);
+      const pre=document.createElement("pre");const code=document.createElement("code");code.textContent=codeText;pre.appendChild(code);
+      block.append(head,pre);container.appendChild(block);continue;
     }
-  }
-
-  function applyPreferences() {
-    document.body.classList.toggle("light", preferences.theme === "light");
-    $("themeSelect").value = preferences.theme;
-    $("enterToggle").setAttribute("aria-checked", String(preferences.enterToSend));
-    const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.content = preferences.theme === "light" ? "#f3f6fc" : "#080914";
-  }
-
-  function showToast(message) {
-    const toast = $("toast");
-    toast.textContent = message;
-    toast.classList.add("show");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
-  }
-
-  function scrollBottom() {
-    requestAnimationFrame(() => { chat.scrollTop = chat.scrollHeight; });
-  }
-
-  function closeSidebar() { sidebar.classList.remove("mobile-open"); }
-
-  function openSettings() {
-    closeSidebar();
-    settingsOverlay.classList.add("open");
-    settingsOverlay.setAttribute("aria-hidden", "false");
-  }
-
-  function closeSettings() {
-    settingsOverlay.classList.remove("open");
-    settingsOverlay.setAttribute("aria-hidden", "true");
-  }
-
-  function openDialog({ title, description, value = "", placeholder = "", confirmText = "Confirm", danger = false, needsInput = false }) {
-    $("dialogTitle").textContent = title;
-    $("dialogDescription").textContent = description;
-    dialogInput.hidden = !needsInput;
-    dialogInput.value = value;
-    dialogInput.placeholder = placeholder;
-    $("dialogConfirm").textContent = confirmText;
-    $("dialogConfirm").classList.toggle("danger", danger);
-    dialogOverlay.classList.add("open");
-    dialogOverlay.setAttribute("aria-hidden", "false");
-    if (needsInput) {
-      setTimeout(() => { dialogInput.focus(); dialogInput.select(); }, 30);
-    } else {
-      $("dialogConfirm").focus();
-    }
-    return new Promise(resolve => { dialogResolver = resolve; });
-  }
-
-  function finishDialog(result) {
-    dialogOverlay.classList.remove("open");
-    dialogOverlay.setAttribute("aria-hidden", "true");
-    const resolve = dialogResolver;
-    dialogResolver = null;
-    if (resolve) resolve(result);
-  }
-
-  function sortChats() {
-    conversations.sort((a,b) => b.updatedAt - a.updatedAt);
-    conversations = conversations.slice(0, MAX_CHATS);
-  }
-
-  function currentChat() {
-    return conversations.find(c => c.id === currentId) || null;
-  }
-
-  function createConversation() {
-    const conversation = {
-      id: makeId(),
-      title: "New conversation",
-      updatedAt: Date.now(),
-      messages: []
-    };
-    conversations.unshift(conversation);
-    currentId = conversation.id;
-    sortChats();
-    persistConversations();
-    renderHistory();
-    renderCurrentConversation();
-    updateHeader();
-    return conversation;
-  }
-
-  function ensureConversation(firstMessage) {
-    let conversation = currentChat();
-    if (!conversation) conversation = createConversation();
-
-    if (conversation.messages.length === 0 && conversation.title === "New conversation") {
-      const clean = firstMessage.replace(/\s+/g, " ").trim();
-      conversation.title = clean.length > 42 ? clean.slice(0, 42) + "…" : (clean || "New conversation");
-    }
-    conversation.updatedAt = Date.now();
-    sortChats();
-    persistConversations();
-    renderHistory();
-    updateHeader();
-    return conversation;
-  }
-
-  function updateHeader() {
-    const c = currentChat();
-    $("topSubtitle").textContent = c ? c.title : "Your space to think bigger.";
-  }
-
-  function renderHistory() {
-    const query = searchInput.value.trim().toLowerCase();
-    historyList.replaceChildren();
-
-    const filtered = conversations.filter(c => {
-      if (!query) return true;
-      return c.title.toLowerCase().includes(query) ||
-        c.messages.some(m => m.content.toLowerCase().includes(query));
-    });
-
-    if (!filtered.length) {
-      const empty = document.createElement("div");
-      empty.className = "history-empty";
-      empty.textContent = query ? "No matching conversations." : "Your saved conversations will appear here.";
-      historyList.appendChild(empty);
-      return;
-    }
-
-    filtered.forEach(c => {
-      const item = document.createElement("div");
-      item.className = "history-item" + (c.id === currentId ? " active" : "");
-
-      const open = document.createElement("button");
-      open.className = "history-open";
-      open.type = "button";
-      open.title = c.title;
-      open.appendChild(svgIcon("chat"));
-      const title = document.createElement("span");
-      title.textContent = c.title;
-      open.appendChild(title);
-      open.addEventListener("click", () => switchConversation(c.id));
-      item.appendChild(open);
-
-      const actions = document.createElement("div");
-      actions.className = "history-actions";
-
-      const rename = document.createElement("button");
-      rename.className = "history-action";
-      rename.type = "button";
-      rename.title = "Rename conversation";
-      rename.setAttribute("aria-label", "Rename " + c.title);
-      rename.appendChild(svgIcon("edit"));
-      rename.addEventListener("click", async () => {
-        const value = await openDialog({
-          title: "Rename conversation",
-          description: "Choose a name that's easy to recognize later.",
-          value: c.title,
-          placeholder: "Conversation name",
-          confirmText: "Save name",
-          needsInput: true
-        });
-        if (value === null) return;
-        const newTitle = String(value).trim();
-        if (!newTitle) { showToast("Please enter a conversation name."); return; }
-        c.title = newTitle.slice(0, 100);
-        c.updatedAt = Date.now();
-        sortChats();
-        persistConversations();
-        renderHistory();
-        updateHeader();
-        showToast("Conversation renamed.");
-      });
-
-      const remove = document.createElement("button");
-      remove.className = "history-action";
-      remove.type = "button";
-      remove.title = "Delete conversation";
-      remove.setAttribute("aria-label", "Delete " + c.title);
-      remove.appendChild(svgIcon("trash"));
-      remove.addEventListener("click", async () => {
-        const ok = await openDialog({
-          title: "Delete conversation?",
-          description: "This permanently removes this conversation from this browser.",
-          confirmText: "Delete",
-          danger: true
-        });
-        if (!ok) return;
-        if (currentId === c.id && controller) {
-          controller.abort();
-          controller = null;
-          isSending = false;
-          updateSendingUI(false);
-        }
-        conversations = conversations.filter(x => x.id !== c.id);
-        if (currentId === c.id) currentId = null;
-        persistConversations();
-        renderHistory();
-        if (!currentId) renderCurrentConversation();
-        updateHeader();
-        showToast("Conversation deleted.");
-      });
-
-      actions.append(rename, remove);
-      item.appendChild(actions);
-      historyList.appendChild(item);
-    });
-  }
-
-  function svgIcon(name) {
-    const ns = "http://www.w3.org/2000/svg";
-    const svg = document.createElementNS(ns, "svg");
-    svg.setAttribute("viewBox", "0 0 24 24");
-    svg.setAttribute("fill", "none");
-    svg.setAttribute("stroke", "currentColor");
-    svg.setAttribute("stroke-width", "1.7");
-    svg.setAttribute("stroke-linecap", "round");
-    svg.setAttribute("stroke-linejoin", "round");
-
-    const paths = {
-      chat: ["M20 11.5a7.5 7.5 0 0 1-7.5 7.5H5l1.8-3.2A7.5 7.5 0 1 1 20 11.5Z"],
-      edit: ["M12 20h9","M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"],
-      trash: ["M3 6h18","M8 6V4h8v2","M19 6l-1 14H6L5 6","M10 10v6M14 10v6"],
-      ai: ["M12 3 14.5 9.5 21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z"],
-      user: ["M20 21a8 8 0 0 0-16 0","M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"],
-      copy: ["M8 8V4h12v12h-4","M4 8h12v12H4z"],
-      search: ["M10.8 10.8m-6.8 0a6.8 6.8 0 1 0 13.6 0a6.8 6.8 0 1 0 -13.6 0","M16 16l4 4"]
-    };
-
-    (paths[name] || paths.ai).forEach(d => {
-      const path = document.createElementNS(ns, "path");
-      path.setAttribute("d", d);
-      svg.appendChild(path);
-    });
-    return svg;
-  }
-
-  function renderWelcome() {
-    const welcome = document.createElement("div");
-    welcome.className = "welcome";
-
-    const particles = document.createElement("div");
-    particles.className = "particles";
-    particles.setAttribute("aria-hidden", "true");
-    for (let i = 0; i < 30; i++) {
-      const p = document.createElement("span");
-      p.className = "particle";
-      p.style.left = (4 + Math.random() * 92) + "%";
-      p.style.top = (3 + Math.random() * 94) + "%";
-      p.style.setProperty("--duration", (5 + Math.random() * 9) + "s");
-      p.style.setProperty("--delay", (-Math.random() * 10) + "s");
-      particles.appendChild(p);
-    }
-    welcome.appendChild(particles);
-
-    const orbWrap = document.createElement("div");
-    orbWrap.className = "orb-wrap";
-    ["orb-ring", "orb-ring ring-two", "orb-ring ring-three"].forEach(cls => {
-      const ring = document.createElement("div");
-      ring.className = cls;
-      ring.setAttribute("aria-hidden", "true");
-      orbWrap.appendChild(ring);
-    });
-    const core = document.createElement("div");
-    core.className = "orb-core";
-    core.appendChild(svgIcon("ai"));
-    orbWrap.appendChild(core);
-    welcome.appendChild(orbWrap);
-
-    const eyebrow = document.createElement("div");
-    eyebrow.className = "eyebrow";
-    const dot = document.createElement("span");
-    dot.className = "status-dot";
-    eyebrow.append(dot, document.createTextNode(" A NEW KIND OF ASSISTANT"));
-    welcome.appendChild(eyebrow);
-
-    const h1 = document.createElement("h1");
-    h1.append(document.createTextNode("Ideas become "));
-    const gradient = document.createElement("span");
-    gradient.className = "gradient-text";
-    gradient.textContent = "possibilities.";
-    h1.appendChild(gradient);
-    welcome.appendChild(h1);
-
-    const copy = document.createElement("p");
-    copy.className = "welcome-copy";
-    copy.textContent = "Your thoughts, questions, and next big ideas start here. What would you like to explore today?";
-    welcome.appendChild(copy);
-
-    const suggestions = document.createElement("div");
-    suggestions.className = "suggestions";
-    const cards = [
-      ["Learn something", "Break down a complex topic.", "Help me understand a difficult topic step by step."],
-      ["Create something", "Turn a rough idea into a plan.", "Help me brainstorm a creative project or business idea."],
-      ["Build with code", "Explore programming and technology.", "Help me write a clean program and explain it step by step."],
-      ["Plan my next move", "Make your next steps clear.", "Help me organize my goals into a practical action plan."]
-    ];
-    cards.forEach((data, index) => {
-      const button = document.createElement("button");
-      button.className = "suggestion";
-      button.type = "button";
-      const iconWrap = document.createElement("span");
-      iconWrap.className = "suggestion-icon";
-      iconWrap.appendChild(svgIcon(["ai","edit","chat","search"][index]));
-      const body = document.createElement("span");
-      const title = document.createElement("div");
-      title.className = "suggestion-title";
-      title.textContent = data[0];
-      const description = document.createElement("div");
-      description.className = "suggestion-description";
-      description.textContent = data[1];
-      body.append(title, description);
-      button.append(iconWrap, body);
-      button.addEventListener("click", () => {
-        input.value = data[2];
-        updateInputUI();
-        input.focus();
-        form.requestSubmit();
-      });
-      suggestions.appendChild(button);
-    });
-    welcome.appendChild(suggestions);
-    return welcome;
-  }
-
-  function renderMessage(role, text, error = false) {
-    const row = document.createElement("article");
-    row.className = "message " + (role === "user" ? "user" : "assistant") + (error ? " error" : "");
-
-    const avatar = document.createElement("div");
-    avatar.className = "message-avatar";
-    avatar.appendChild(svgIcon(role === "user" ? "user" : "ai"));
-
-    const content = document.createElement("div");
-    content.className = "message-content";
-    const label = document.createElement("div");
-    label.className = "message-label";
-    label.textContent = role === "user" ? "You" : (error ? "Connection issue" : "CLIPA AI");
-
-    const bubble = document.createElement("div");
-    bubble.className = "bubble";
-    // Keep AI output as plain text: never execute HTML returned by the model.
-    bubble.textContent = text;
-    content.append(label, bubble);
-
-    if (role === "assistant" && !error) {
-      const tools = document.createElement("div");
-      tools.className = "message-tools";
-      const copy = document.createElement("button");
-      copy.className = "tool-button";
-      copy.type = "button";
-      copy.appendChild(svgIcon("copy"));
-      const caption = document.createElement("span");
-      caption.textContent = "Copy";
-      copy.appendChild(caption);
-      copy.addEventListener("click", async () => {
-        try {
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            await navigator.clipboard.writeText(text);
-            caption.textContent = "Copied";
-            setTimeout(() => { caption.textContent = "Copy"; }, 1300);
-          } else {
-            throw new Error("Clipboard unavailable");
-          }
-        } catch (_) {
-          const temp = document.createElement("textarea");
-          temp.value = text;
-          temp.style.position = "fixed";
-          temp.style.opacity = "0";
-          document.body.appendChild(temp);
-          temp.select();
-          let ok = false;
-          try { ok = document.execCommand("copy"); } catch (_) {}
-          temp.remove();
-          showToast(ok ? "Response copied." : "Please select and copy the response.");
-        }
-      });
-      tools.appendChild(copy);
-      content.appendChild(tools);
-    }
-
-    row.append(avatar, content);
-    chatInner.appendChild(row);
-    return row;
-  }
-
-  function renderTyping() {
-    const row = document.createElement("article");
-    row.className = "message assistant";
-    row.id = "typingIndicator";
-    const avatar = document.createElement("div");
-    avatar.className = "message-avatar";
-    avatar.appendChild(svgIcon("ai"));
-    const content = document.createElement("div");
-    content.className = "message-content";
-    const label = document.createElement("div");
-    label.className = "message-label";
-    label.textContent = "CLIPA AI is thinking";
-    const bubble = document.createElement("div");
-    bubble.className = "bubble typing-bubble";
-    for (let i = 0; i < 3; i++) {
-      const dot = document.createElement("span");
-      dot.className = "typing-dot";
-      bubble.appendChild(dot);
-    }
-    content.append(label, bubble);
-    row.append(avatar, content);
-    chatInner.appendChild(row);
-    scrollBottom();
-    return row;
-  }
-
-  function renderCurrentConversation() {
-    chatInner.replaceChildren();
-    const c = currentChat();
-    if (!c || !c.messages.length) {
-      chatInner.appendChild(renderWelcome());
-      return;
-    }
-    c.messages.forEach(m => renderMessage(m.role, m.content));
-    scrollBottom();
-  }
-
-  function switchConversation(id) {
-    if (isSending) {
-      showToast("Wait for the current response before switching chats.");
-      return;
-    }
-    if (!conversations.some(c => c.id === id)) return;
-    currentId = id;
-    renderHistory();
-    renderCurrentConversation();
-    updateHeader();
-    closeSidebar();
-    input.focus();
-  }
-
-  function updateInputUI() {
-    $("characterCount").textContent = input.value.length + " / 6000";
-    input.style.height = "auto";
-    input.style.height = Math.min(input.scrollHeight, 170) + "px";
-  }
-
-  function updateSendingUI(sending) {
-    isSending = sending;
-    sendButton.disabled = sending;
-    sendButton.setAttribute("aria-label", sending ? "Sending message" : "Send message");
-    sendButton.innerHTML = sending
-      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="7"/><path d="M9 9l6 6m0-6-6 6"/></svg>'
-      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>';
-  }
-
-  async function sendMessage(raw) {
-    const message = raw.trim();
-    if (!message || isSending) return;
-
-    const conversation = ensureConversation(message);
-    // Save only completed user/assistant turns to preserve the existing history behavior.
-    renderMessage("user", message);
-    scrollBottom();
-    input.value = "";
-    updateInputUI();
-    updateSendingUI(true);
-    const typing = renderTyping();
-    controller = new AbortController();
-
-    // Preserve the existing Worker API: POST { message, history }.
-    const historyForRequest = conversation.messages.slice(-12).map(m => ({
-      role: m.role,
-      content: m.content
-    }));
-
-    try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, history: historyForRequest }),
-        signal: controller.signal
-      });
-
-      let data;
-      try { data = await response.json(); }
-      catch (_) { throw new Error("The server returned an unreadable response. Please try again."); }
-
-      if (!response.ok) {
-        throw new Error((data && (data.details || data.error)) || "Request failed (" + response.status + ").");
+    if(!line.trim()){flush();i++;continue}
+    const heading=line.match(/^(#{1,3})\s+(.+)$/);
+    if(heading){flush();const h=document.createElement("h"+heading[1].length);appendInline(h,heading[2]);container.appendChild(h);i++;continue}
+    if(/^\s*>\s?/.test(line)){flush();const q=document.createElement("blockquote");appendInline(q,line.replace(/^\s*>\s?/,""));container.appendChild(q);i++;continue}
+    if(/^\s*[-*]\s+/.test(line)||/^\s*\d+[.)]\s+/.test(line)){
+      flush();const ordered=/^\s*\d+[.)]\s+/.test(line);const list=document.createElement(ordered?"ol":"ul");
+      while(i<lines.length&&(ordered?/^\s*\d+[.)]\s+/:/^\s*[-*]\s+/).test(lines[i])){
+        const li=document.createElement("li");appendInline(li,lines[i].replace(ordered?/^\s*\d+[.)]\s+/:/^\s*[-*]\s+/,""));list.appendChild(li);i++;
       }
-
-      const reply = data && typeof data.reply === "string" ? data.reply.trim() : "";
-      if (!reply) throw new Error("CLIPA AI returned an empty response. Please try again.");
-
-      typing.remove();
-
-      conversation.messages.push(
-        { role: "user", content: message },
-        { role: "assistant", content: reply }
-      );
-      conversation.messages = conversation.messages.slice(-MAX_HISTORY);
-      conversation.updatedAt = Date.now();
-      sortChats();
-      persistConversations();
-      renderHistory();
-      renderCurrentConversation();
-      updateHeader();
-    } catch (error) {
-      typing.remove();
-      if (error && error.name === "AbortError") return;
-      renderMessage("assistant", error instanceof Error ? error.message : "Something went wrong. Please try again.", true);
-      scrollBottom();
-    } finally {
-      controller = null;
-      updateSendingUI(false);
-      input.focus();
+      container.appendChild(list);continue;
     }
+    paragraph.push(line);i++;
   }
+  flush();
+}
 
-  async function startNewChat() {
-    if (isSending) {
-      const ok = await openDialog({
-        title: "Start a new conversation?",
-        description: "The current request will be cancelled. Any completed turns are already saved.",
-        confirmText: "Start new chat"
-      });
-      if (!ok) return;
-      if (controller) controller.abort();
-      controller = null;
-      updateSendingUI(false);
+async function copyText(text,button){
+  try{
+    if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(text);
+    else{
+      const temp=document.createElement("textarea");temp.value=text;temp.style.position="fixed";temp.style.opacity="0";
+      document.body.appendChild(temp);temp.select();const ok=document.execCommand("copy");temp.remove();if(!ok)throw Error();
     }
-    currentId = null;
-    renderHistory();
-    renderCurrentConversation();
-    updateHeader();
-    closeSidebar();
-    input.value = "";
-    updateInputUI();
-    input.focus();
-  }
+    if(button){const old=button.textContent;button.textContent="Copied";setTimeout(()=>button.textContent=old,1200)}
+    else showToast("Copied to clipboard.");
+  }catch(e){showToast("Copy was blocked. Please select and copy the text manually.")}
+}
 
-  async function deleteAllChats() {
-    if (!conversations.length) { showToast("There are no saved conversations."); return; }
-    const ok = await openDialog({
-      title: "Delete all saved conversations?",
-      description: "This removes every saved conversation from this browser. This action cannot be undone.",
-      confirmText: "Delete all",
-      danger: true
+function toolButton(label,icon,fn){
+  const b=document.createElement("button");b.type="button";b.className="tool-btn";
+  if(icon)b.appendChild(svgIcon(icon));
+  b.appendChild(document.createTextNode(label));b.addEventListener("click",fn);return b;
+}
+function renderMessage(role,text,index,error=false){
+  const row=document.createElement("article");row.className="message "+role+(error?" error":"");
+  const avatar=document.createElement("div");avatar.className="message-avatar";avatar.appendChild(svgIcon(role==="user"?"edit":"ai"));
+  const content=document.createElement("div");content.className="message-content";
+  const label=document.createElement("div");label.className="message-label";label.textContent=error?"Connection issue":role==="user"?"YOU":"CLIPA AI";
+  const bubble=document.createElement("div");bubble.className="bubble";
+  if(role==="assistant"&&!error)renderMarkdown(bubble,text);else bubble.textContent=text;
+  content.append(label,bubble);
+  if(!error){
+    const tools=document.createElement("div");tools.className="message-tools";
+    tools.appendChild(toolButton("Copy","copy",()=>copyText(text)));
+    const c=currentChat();
+    if(c&&index===c.messages.length-1&&role==="assistant"){
+      tools.appendChild(toolButton("Regenerate","refresh",regenerateLastResponse));
+    }
+    if(c&&role==="user"&&index===c.messages.length-2){
+      tools.appendChild(toolButton("Edit & resend","edit",()=>beginEditMessage(index)));
+    }
+    content.appendChild(tools);
+  }
+  row.append(avatar,content);chatInner.appendChild(row);return row;
+}
+function renderTyping(){
+  const row=document.createElement("article");row.className="message assistant";row.id="typingIndicator";
+  const avatar=document.createElement("div");avatar.className="message-avatar";avatar.appendChild(svgIcon("ai"));
+  const content=document.createElement("div");content.className="message-content";
+  const label=document.createElement("div");label.className="message-label";label.textContent="CLIPA AI IS THINKING";
+  const bubble=document.createElement("div");bubble.className="bubble typing-bubble";
+  for(let i=0;i<3;i++){const dot=document.createElement("span");dot.className="typing-dot";bubble.appendChild(dot)}
+  content.append(label,bubble);row.append(avatar,content);chatInner.appendChild(row);scrollBottom();return row;
+}
+function renderCurrent(){
+  chatInner.replaceChildren();const c=currentChat();
+  if(!c||!c.messages.length)chatInner.appendChild(renderWelcome());
+  else c.messages.forEach((m,i)=>renderMessage(m.role,m.content,i));
+  updateHeader();renderHistory();scrollBottom();
+}
+function updateHeader(){
+  const c=currentChat();$("headerTitle").textContent=c?safeTitle(c.title):"A new perspective";
+}
+function renderHistory(){
+  const list=$("historyList");list.replaceChildren();
+  const query=$("searchInput").value.trim().toLowerCase();
+  sortConversations();
+  const shown=conversations.filter(c=>(c.title+" "+c.messages.map(m=>m.content).join(" ")).toLowerCase().includes(query));
+  if(!shown.length){const empty=document.createElement("div");empty.className="history-empty";empty.textContent=query?"No matching conversations.":"Your conversations will appear here.";list.appendChild(empty);return}
+  shown.forEach(c=>{
+    const row=document.createElement("div");row.className="chat-item"+(c.id===currentId?" active":"");
+    const title=document.createElement("button");title.className="chat-title";title.textContent=(c.pinned?"✦ ":"")+c.title;title.title=c.title;
+    title.addEventListener("click",()=>switchConversation(c.id));
+    const menu=document.createElement("button");menu.className="small-btn";menu.textContent="···";menu.title="Conversation options";
+    menu.addEventListener("click",()=>conversationMenu(c.id));
+    row.append(title,menu);list.appendChild(row);
+  });
+}
+function switchConversation(id){
+  if(isSending){showToast("Stop the current response before switching chats.");return}
+  if(!conversations.some(c=>c.id===id))return;
+  currentId=id;renderCurrent();closeSidebar();input.focus();
+}
+function newConversation(){
+  if(isSending){showToast("Stop the current response before starting a new chat.");return}
+  currentId=null;pendingEdit=null;hideEditBanner();input.value="";updateInputUI();renderCurrent();closeSidebar();input.focus();
+}
+function closeSidebar(){$("sidebar").classList.remove("open")}
+function updateInputUI(){
+  $("charCount").textContent=input.value.length+" / 6000";
+  input.style.height="auto";input.style.height=Math.min(input.scrollHeight,170)+"px";
+}
+function updateSendingUI(sending){
+  isSending=sending;sendButton.classList.toggle("is-stop",sending);
+  sendButton.setAttribute("aria-label",sending?"Stop generation":"Send message");
+  sendButton.title=sending?"Stop response":"Send message";
+  sendButton.innerHTML=sending?ICONS.stop:ICONS.send;
+  $("statusText").textContent=sending?"Generating response":"AI workspace";
+}
+function beginEditMessage(index){
+  const c=currentChat();if(!c||isSending||!c.messages[index]||c.messages[index].role!=="user")return;
+  pendingEdit={conversationId:c.id,index};
+  input.value=c.messages[index].content;showEditBanner();updateInputUI();input.focus();
+  input.setSelectionRange(input.value.length,input.value.length);
+}
+function showEditBanner(){
+  const banner=$("editBanner");banner.hidden=false;banner.replaceChildren();
+  banner.appendChild(document.createTextNode("Editing a message — sending replaces this turn and everything after it."));
+  const cancel=document.createElement("button");cancel.type="button";cancel.textContent="Cancel edit";
+  cancel.addEventListener("click",()=>{pendingEdit=null;hideEditBanner();input.value="";updateInputUI()});
+  banner.appendChild(cancel);
+}
+function hideEditBanner(){$("editBanner").hidden=true;$("editBanner").replaceChildren()}
+
+async function regenerateLastResponse(){
+  const c=currentChat();if(!c||isSending||c.messages.length<2)return;
+  const last=c.messages[c.messages.length-1],previous=c.messages[c.messages.length-2];
+  if(last.role!=="assistant"||previous.role!=="user"){showToast("There is no latest answer to regenerate.");return}
+  c.messages.pop();persist();renderCurrent();
+  await sendMessage(previous.content,{regenerate:true});
+}
+
+async function sendMessage(raw,options={}){
+  const message=String(raw||"").trim();
+  if(!message||isSending)return;
+  let c=currentChat();
+  if(pendingEdit&&c&&pendingEdit.conversationId===c.id&&!options.regenerate){
+    c.messages=c.messages.slice(0,pendingEdit.index);
+    pendingEdit=null;hideEditBanner();persist();renderCurrent();
+  }else if(!options.regenerate){
+    pendingEdit=null;hideEditBanner();
+    c=ensureChat(message);
+    c.messages.push({role:"user",content:message});
+  }
+  if(!c)c=ensureChat(message);
+  c.updatedAt=Date.now();persist();input.value="";updateInputUI();
+  renderCurrent();updateSendingUI(true);
+  const typing=renderTyping();controller=new AbortController();
+  const history=options.regenerate?c.messages.slice(0,-1):c.messages.slice(0,-1);
+  const historyForRequest=history.slice(-12).map(m=>({role:m.role,content:m.content.slice(0,3000)}));
+  let aborted=false;
+  try{
+    const response=await fetch(API_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({message,history:historyForRequest}),
+      signal:controller.signal
     });
-    if (!ok) return;
-    if (controller) controller.abort();
-    controller = null;
-    updateSendingUI(false);
-    conversations = [];
-    currentId = null;
-    persistConversations();
-    renderHistory();
-    renderCurrentConversation();
-    updateHeader();
-    closeSettings();
-    showToast("All saved conversations deleted.");
+    if(!response.ok)throw new Error("The AI service returned HTTP "+response.status);
+    const data=await response.json();
+    const reply=typeof data.reply==="string"?data.reply:typeof data.response==="string"?data.response:"";
+    if(!reply)throw new Error("The server returned an empty response.");
+    if(!aborted){
+      c.messages.push({role:"assistant",content:reply});
+      c.updatedAt=Date.now();persist();
+    }
+  }catch(error){
+    if(error.name==="AbortError"){aborted=true;showToast("Request cancelled.");}
+    else{
+      typing.remove();
+      renderMessage("assistant","I couldn't get a response from the AI service. Please check your connection and try again.\n\nDetails: "+error.message,-1,true);
+      showToast("Couldn't connect to CLIPA AI.");
+    }
+  }finally{
+    const t=$("typingIndicator");if(t)t.remove();
+    controller=null;updateSendingUI(false);persist();renderCurrent();
   }
+}
+function stopGeneration(){
+  if(controller){controller.abort();controller=null}
+  updateSendingUI(false);
+}
 
-  function setupVoice() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      $("voiceButton").hidden = true;
-      $("voiceStatus").textContent = "This browser does not expose speech recognition. You can still type or attach a text file.";
-      return;
-    }
-
-    $("voiceButton").hidden = false;
-    $("voiceStatus").textContent = "Voice input uses your browser's speech recognition if supported. It may require permission and an internet connection.";
-
-    try {
-      recognition = new SpeechRecognition();
-      recognition.lang = navigator.language || "en-US";
-      recognition.continuous = false;
-      recognition.interimResults = true;
-
-      recognition.onstart = () => {
-        isListening = true;
-        $("voiceButton").style.color = "var(--cyan)";
-        $("composerHint").textContent = "Listening… tap the microphone to stop.";
-      };
-
-      recognition.onresult = event => {
-        let finalText = "";
-        let interimText = "";
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          if (event.results[i].isFinal) finalText += event.results[i][0].transcript;
-          else interimText += event.results[i][0].transcript;
-        }
-        if (finalText) {
-          input.value = (input.value ? input.value + " " : "") + finalText.trim();
-          updateInputUI();
-        }
-        if (interimText) $("composerHint").textContent = "Hearing: " + interimText.slice(0, 50);
-      };
-
-      recognition.onerror = event => {
-        showToast(event.error === "not-allowed" ? "Microphone permission was denied." : "Voice input stopped. You can type instead.");
-      };
-
-      recognition.onend = () => {
-        isListening = false;
-        $("voiceButton").style.color = "";
-        $("composerHint").textContent = "Curious minds go further.";
-      };
-    } catch (_) {
-      recognition = null;
-      $("voiceButton").hidden = true;
-      $("voiceStatus").textContent = "Voice input could not be initialized in this browser.";
-    }
+function conversationMenu(id){
+  const c=conversations.find(x=>x.id===id);if(!c)return;
+  openModal("Conversation options","Choose an action for “"+c.title+"”.",[
+    {label:c.pinned?"Unpin conversation":"Pin conversation",run:()=>{c.pinned=!c.pinned;persist();renderHistory()}},
+    {label:"Rename",run:()=>renameConversation(id)},
+    {label:"Delete",run:()=>deleteConversation(id),danger:true}
+  ]);
+}
+function openModal(title,description,actions){
+  const root=$("modalRoot");root.replaceChildren();
+  const backdrop=document.createElement("div");backdrop.className="modal-backdrop";
+  const modal=document.createElement("div");modal.className="modal";modal.setAttribute("role","dialog");modal.setAttribute("aria-modal","true");
+  const h=document.createElement("h2");h.textContent=title;
+  const p=document.createElement("p");p.textContent=description;modal.append(h,p);
+  let field=null;
+  if(actions.some(a=>a.input)){
+    field=document.createElement("input");field.value=actions.find(a=>a.input).input;field.maxLength=80;modal.appendChild(field);
   }
+  const buttons=document.createElement("div");buttons.className="modal-actions";
+  const cancel=document.createElement("button");cancel.textContent="Cancel";cancel.addEventListener("click",()=>root.replaceChildren());buttons.appendChild(cancel);
+  actions.forEach(action=>{
+    const b=document.createElement("button");b.textContent=action.label;
+    if(action.confirm)b.className="confirm";
+    if(action.danger)b.style.color="#ff8da7";
+    b.addEventListener("click",()=>{root.replaceChildren();action.run(field?field.value:undefined)});
+    buttons.appendChild(b);
+  });
+  modal.appendChild(buttons);backdrop.appendChild(modal);
+  backdrop.addEventListener("click",e=>{if(e.target===backdrop)root.replaceChildren()});
+  root.appendChild(backdrop);
+  if(field){field.focus();field.select()}
+}
+function renameConversation(id){
+  const c=conversations.find(x=>x.id===id);if(!c)return;
+  openModal("Rename conversation","Choose a short title.",[
+    {label:"Save",confirm:true,input:c.title,run:value=>{if(value&&value.trim()){c.title=safeTitle(value);persist();renderHistory();updateHeader()}}}
+  ]);
+}
+function deleteConversation(id){
+  const c=conversations.find(x=>x.id===id);if(!c)return;
+  openModal("Delete conversation","This removes the conversation from this browser. This cannot be undone.",[
+    {label:"Delete",danger:true,run:()=>{conversations=conversations.filter(x=>x.id!==id);if(currentId===id)currentId=null;persist();renderCurrent()}}
+  ]);
+}
 
-  // Sidebar controls
-  $("newChatButton").addEventListener("click", startNewChat);
-  $("settingsButton").addEventListener("click", openSettings);
-  $("topSettingsButton").addEventListener("click", openSettings);
-  $("menuButton").addEventListener("click", () => sidebar.classList.toggle("mobile-open"));
-  $("exploreButton").addEventListener("click", () => {
-    input.value = "Tell me what you can help me with.";
-    updateInputUI();
-    closeSidebar();
-    input.focus();
-  });
-  searchInput.addEventListener("input", renderHistory);
+function exportBackup(){
+  const data={app:"CLIPA AI",version:1,exportedAt:new Date().toISOString(),conversations};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");
+  a.href=url;a.download="clipa-ai-backup.json";a.click();URL.revokeObjectURL(url);
+  showToast("Backup exported.");
+}
+function importBackup(file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      const incoming=Array.isArray(data)?data:data.conversations;
+      if(!Array.isArray(incoming))throw Error("This file does not contain CLIPA conversations.");
+      const cleaned=incoming.filter(c=>c&&typeof c==="object"&&Array.isArray(c.messages)).map(c=>({
+        id:uid(),title:safeTitle(c.title),updatedAt:Number(c.updatedAt)||Date.now(),pinned:!!c.pinned,
+        messages:c.messages.filter(m=>m&&["user","assistant"].includes(m.role)&&typeof m.content==="string")
+          .map(m=>({role:m.role,content:m.content.slice(0,100000)}))
+      }));
+      if(!cleaned.length)throw Error("No valid conversations were found.");
+      conversations=[...cleaned,...conversations];currentId=cleaned[0].id;persist();renderCurrent();showToast("Backup restored.");
+    }catch(e){showToast("Import failed: "+e.message)}
+    $("importFile").value="";
+  };
+  reader.readAsText(file);
+}
 
-  // Settings controls
-  $("closeSettings").addEventListener("click", closeSettings);
-  settingsOverlay.addEventListener("click", e => { if (e.target === settingsOverlay) closeSettings(); });
-  $("themeSelect").addEventListener("change", () => {
-    preferences.theme = $("themeSelect").value === "light" ? "light" : "dark";
-    savePreferences();
-    applyPreferences();
-  });
-  $("enterToggle").addEventListener("click", () => {
-    preferences.enterToSend = !preferences.enterToSend;
-    savePreferences();
-    applyPreferences();
-  });
-  $("clearAllChats").addEventListener("click", deleteAllChats);
+$("newChatBtn").addEventListener("click",newConversation);
+$("clearBtn").addEventListener("click",newConversation);
+$("menuBtn").addEventListener("click",()=>$("sidebar").classList.toggle("open"));
+$("searchInput").addEventListener("input",renderHistory);
+$("exportBtn").addEventListener("click",exportBackup);
+$("importBtn").addEventListener("click",()=>$("importFile").click());
+$("importFile").addEventListener("change",e=>importBackup(e.target.files[0]));
+$("attachBtn").addEventListener("click",()=>$("fileInput").click());
+$("fileInput").addEventListener("change",async e=>{
+  const file=e.target.files[0];if(!file)return;
+  if(file.size>200000){showToast("Please choose a text file smaller than 200 KB.");e.target.value="";return}
+  try{
+    attachedFileText=await file.text();attachedFileName=file.name;
+    const chip=$("fileChip");chip.hidden=false;chip.replaceChildren();
+    chip.appendChild(document.createTextNode("📎 "+file.name+" · "+file.size+" bytes"));
+    const remove=document.createElement("button");remove.textContent="Remove";
+    remove.addEventListener("click",()=>{attachedFileText="";attachedFileName="";chip.hidden=true;$("fileInput").value=""});
+    chip.appendChild(remove);showToast("File ready. Its text will be included in your next message.");
+  }catch(e){showToast("Couldn't read that file.")}
+});
+$("voiceBtn").addEventListener("click",()=>{
+  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SpeechRecognition){showToast("Voice input isn't supported by this browser.");return}
+  const recognition=new SpeechRecognition();recognition.lang="en-US";recognition.interimResults=false;
+  recognition.onresult=e=>{input.value+=(input.value?" ":"")+e.results[0][0].transcript;updateInputUI();input.focus()};
+  recognition.onerror=()=>showToast("Voice input failed. Check microphone permission.");
+  recognition.start();showToast("Listening…");
+});
 
-  // Dialog controls
-  $("dialogCancel").addEventListener("click", () => finishDialog(null));
-  $("dialogConfirm").addEventListener("click", () => {
-    finishDialog(dialogInput.hidden ? true : dialogInput.value);
-  });
-  dialogOverlay.addEventListener("click", e => { if (e.target === dialogOverlay) finishDialog(null); });
-  dialogInput.addEventListener("keydown", e => {
-    if (e.key === "Enter") { e.preventDefault(); finishDialog(dialogInput.value); }
-  });
-
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape") {
-      closeSettings();
-      closeSidebar();
-      if (dialogOverlay.classList.contains("open")) finishDialog(null);
-    }
-  });
-
-  // Composer
-  input.addEventListener("input", updateInputUI);
-  input.addEventListener("keydown", e => {
-    if (e.key === "Enter" && !e.shiftKey && preferences.enterToSend) {
-      e.preventDefault();
-      form.requestSubmit();
-    }
-  });
-  form.addEventListener("submit", e => {
-    e.preventDefault();
-    if (!isSending) sendMessage(input.value);
-  });
-
-  // Attach text/code files. Contents are inserted into the prompt; files are not uploaded separately.
-  $("attachButton").addEventListener("click", () => $("fileInput").click());
-  $("fileInput").addEventListener("change", async e => {
-    const file = e.target.files && e.target.files[0];
-    e.target.value = "";
-    if (!file) return;
-    const allowed = /\.(txt|md|csv|json|js|py|html|css|xml|log|c|cpp|java)$/i.test(file.name);
-    if (!allowed) { showToast("Choose a supported text or code file."); return; }
-    if (file.size > 100000) { showToast("Please choose a file smaller than 100 KB."); return; }
-    try {
-      const content = await file.text();
-      const clipped = content.slice(0, MAX_FILE_CHARS);
-      const insertion = "\n\n[Attached text file: " + file.name + "]\n" + clipped +
-        (content.length > MAX_FILE_CHARS ? "\n[File content truncated for length.]" : "") + "\n";
-      const combined = input.value + insertion;
-      input.value = combined.slice(0, 6000);
-      updateInputUI();
-      input.focus();
-      showToast("File text added to your message. Review it before sending.");
-    } catch (_) {
-      showToast("Could not read that file.");
-    }
-  });
-
-  // Voice input is feature-detected; unsupported browsers simply hide the control.
-  $("voiceButton").addEventListener("click", () => {
-    if (!recognition) { showToast("Voice input is not supported here."); return; }
-    try {
-      if (isListening) recognition.stop();
-      else recognition.start();
-    } catch (_) {
-      showToast("Voice input could not start. Check browser microphone permissions.");
-    }
-  });
-
-  // Initial setup
-  loadPreferences();
-  loadConversations();
-  applyPreferences();
-  setupVoice();
-
-  try {
-    localStorage.setItem("__clipa_test__", "1");
-    localStorage.removeItem("__clipa_test__");
-  } catch (_) {
-    storageAvailable = false;
-    $("storageStatus").textContent = "Browser storage is unavailable. Conversations may not persist after reloading this page.";
+form.addEventListener("submit",e=>{
+  e.preventDefault();
+  if(isSending){stopGeneration();return}
+  let text=input.value.trim();
+  if(attachedFileText){
+    const block="\n\n[Text from attached file: "+attachedFileName+"]\n"+attachedFileText;
+    text+=block;attachedFileText="";attachedFileName="";$("fileChip").hidden=true;$("fileInput").value="";
   }
+  sendMessage(text);
+});
+input.addEventListener("input",updateInputUI);
+input.addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();form.requestSubmit()}
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){closeSidebar();$("modalRoot").replaceChildren()}
+});
+document.addEventListener("click",e=>{
+  if(window.innerWidth<=760&&$("sidebar").classList.contains("open")&&!$("sidebar").contains(e.target)&&!$("menuBtn").contains(e.target))closeSidebar();
+});
 
-  currentId = null;
-  renderHistory();
-  renderCurrentConversation();
-  updateHeader();
-  updateInputUI();
-})();
+renderHistory();renderCurrent();updateInputUI();
 </script>
 </body>
 </html>
